@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-/* BST  */
+/* BST */
 
 bst_sf* insert_bst_sf(matrix_sf *mat, bst_sf *root){
 
@@ -17,6 +17,7 @@ bst_sf* insert_bst_sf(matrix_sf *mat, bst_sf *root){
         return n;
     }
 
+    // insert based on name ordering
     if(mat->name < root->mat->name){
         root->left_child = insert_bst_sf(mat, root->left_child);
     } else {
@@ -46,17 +47,19 @@ void free_bst_sf(bst_sf *root){
     free_bst_sf(root->left_child);
     free_bst_sf(root->right_child);
 
+    // free stored matrix and node
     free(root->mat);
     free(root);
 }
 
 
-/*  MATRIX OPS  */
+/* MATRIX OPERATIONS */
 
 matrix_sf* add_mats_sf(const matrix_sf *a, const matrix_sf *b){
 
     if(a==NULL || b==NULL) return NULL;
 
+    // must be same size to add
     if(a->num_rows != b->num_rows || a->num_cols != b->num_cols){
         return NULL;
     }
@@ -65,7 +68,7 @@ matrix_sf* add_mats_sf(const matrix_sf *a, const matrix_sf *b){
     int c = a->num_cols;
 
     matrix_sf *res = malloc(sizeof(matrix_sf) + r*c*sizeof(int));
-    res->name='?';
+    res->name='?'; // temp matrix
     res->num_rows = r;
     res->num_cols = c;
 
@@ -93,6 +96,7 @@ matrix_sf* mult_mats_sf(const matrix_sf *a, const matrix_sf *b){
 
     int i,j,k;
 
+    // standard matrix multiplication
     for(i=0;i<r;i++){
         for(j=0;j<c2;j++){
 
@@ -121,6 +125,7 @@ matrix_sf* transpose_mat_sf(const matrix_sf *m){
 
     int i,j;
 
+    // swap rows and cols
     for(i=0;i<r;i++){
         for(j=0;j<c;j++){
             res->values[j*r + i] = m->values[i*c + j];
@@ -131,13 +136,14 @@ matrix_sf* transpose_mat_sf(const matrix_sf *m){
 }
 
 
-/* CREATE MATRIX */
+/* CREATE MATRIX FROM STRING */
 
 matrix_sf* create_matrix_sf(char name, const char *expr){
 
     int rows,cols;
     const char *p = expr;
 
+    // parse rows
     while(*p && isspace(*p)) p++;
     rows = atoi(p);
 
@@ -145,6 +151,7 @@ matrix_sf* create_matrix_sf(char name, const char *expr){
     while(*p && isspace(*p)) p++;
     cols = atoi(p);
 
+    // move to values
     while(*p && *p!='[') p++;
     p++;
 
@@ -156,6 +163,7 @@ matrix_sf* create_matrix_sf(char name, const char *expr){
 
     int i = 0;
 
+    // read values skip semicolons
     while(*p && *p!=']'){
 
         if(*p==';'){
@@ -175,7 +183,7 @@ matrix_sf* create_matrix_sf(char name, const char *expr){
 }
 
 
-/* INFIX TO POSTFIX  */
+/* INFIX TO POSTFIX */
 
 int prec(char c){
     if(c=='*') return 2;
@@ -201,7 +209,7 @@ char* infix2postfix_sf(char *infix){
         if(isalpha(c)){
             out[j++] = c;
         }
-        else if(c=='\''){
+        else if(c=='\''){ 
             out[j++] = c;
         }
         else if(c=='('){
@@ -232,7 +240,7 @@ char* infix2postfix_sf(char *infix){
 }
 
 
-/* EVALUATE */
+/* EVALUATE EXPRESSION USING POSTFIX */
 
 matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root){
 
@@ -249,11 +257,12 @@ matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root){
         if(isalpha(c)){
             stack[++top] = find_bst_sf(c, root);
         }
-        else if(c=='\''){
+        else if(c=='\''){ // transpose
 
             matrix_sf *a = stack[top--];
             matrix_sf *tmp = transpose_mat_sf(a);
 
+            // free temp matrices only
             if(!isalpha(a->name)){
                 free(a);
             }
@@ -273,6 +282,7 @@ matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root){
                 tmp = mult_mats_sf(a,b);
             }
 
+            // free temps
             if(!isalpha(a->name)) free(a);
             if(!isalpha(b->name)) free(b);
 
@@ -288,7 +298,7 @@ matrix_sf* evaluate_expr_sf(char name, char *expr, bst_sf *root){
 }
 
 
-/* SCRIPT */
+/* EXECUTE SCRIPT FILE */
 
 matrix_sf* execute_script_sf(char *filename){
 
@@ -300,6 +310,7 @@ matrix_sf* execute_script_sf(char *filename){
     bst_sf *root=NULL;
     matrix_sf *last=NULL;
 
+    // read each line of script
     while(getline(&line,&len,f)!=-1){
 
         char name = line[0];
@@ -318,6 +329,7 @@ matrix_sf* execute_script_sf(char *filename){
         }
     }
 
+    // return copy of final matrix
     matrix_sf *final = copy_matrix(last->num_rows,last->num_cols,last->values);
     final->name = last->name;
 
@@ -329,7 +341,7 @@ matrix_sf* execute_script_sf(char *filename){
 }
 
 
-/* REQUIRED */
+/* REQUIRED FUNCTIONS */
 
 matrix_sf* copy_matrix(unsigned int r,unsigned int c,int values[]){
 
