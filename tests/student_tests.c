@@ -2,7 +2,7 @@
 
 TestSuite(student_tests, .timeout = TEST_TIMEOUT);
 
-/* ================= ADD (10) ================= */
+/*  ADD (10)  */
 
 Test(student_tests, add1){
     int a[]={1,2,3,4}, b[]={5,6,7,8};
@@ -94,7 +94,7 @@ Test(student_tests, add10){
     free(A);free(B);free(R);
 }
 
-/* ================= MULT (10) ================= */
+/* MULT (10)  */
 
 Test(student_tests, mult1){
     int a[]={1,2,3,4}, b[]={5,6,7,8};
@@ -186,7 +186,7 @@ Test(student_tests, mult10){
     free(A);free(B);free(R);
 }
 
-/* ================= TRANSPOSE (10) ================= */
+/* TRANSPOSE (10)  */
 
 Test(student_tests, t1){
     int a[]={1,2,3,4};
@@ -268,7 +268,7 @@ Test(student_tests, t10){
     free(A);free(T);
 }
 
-/* ================= CREATE (10) ================= */
+/* CREATE (10) */
 
 Test(student_tests, c1){
     matrix_sf*m=create_matrix_sf('A',"2 2 [1 2;3 4;]");
@@ -330,7 +330,7 @@ Test(student_tests, c10){
     free(m);
 }
 
-/* ================= BST (10) ================= */
+/* BST (10) */
 
 Test(student_tests, b1){
     int a[]={1};
@@ -424,7 +424,7 @@ Test(student_tests, b10){
     free_bst_sf(root);
 }
 
-/* ================= POSTFIX (10) ================= */
+/* POSTFIX (10) */
 
 Test(student_tests, p1){
     char *p=infix2postfix_sf("A+B");
@@ -486,7 +486,7 @@ Test(student_tests, p10){
     free(p);
 }
 
-/* ================= EVALUATE (10) ================= */
+/* EVALUATE (10) */
 
 Test(student_tests, e1){
     int a[]={1,2,3,4};
@@ -588,7 +588,7 @@ Test(student_tests, e10){
     free(R); free_bst_sf(root);
 }
 
-/* ================= EXECUTE SCRIPT (10) ================= */
+/* EXECUTE SCRIPT (10) */
 
 Test(student_tests, s1){
     FILE*f=fopen("t1.txt","w");
